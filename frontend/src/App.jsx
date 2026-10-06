@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 
-const API = "http://localhost:8000";
+const TTS_API = "http://localhost:8000";
+const STT_API = "http://localhost:8001";
 
 const VOICES = [
     ["af_heart", "Heart (US, female)"],
@@ -50,7 +51,7 @@ export default function App() {
         try {
             const form = new FormData();
             form.append("file", blob, "recording.webm");
-            const res = await fetch(`${API}/stt`, { method: "POST", body: form });
+            const res = await fetch(`${STT_API}/stt`, { method: "POST", body: form });
             if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
             const data = await res.json();
             setText((t) => (t ? t + " " : "") + data.text);
@@ -66,7 +67,7 @@ export default function App() {
         setBusy(true);
         setStatus("Generating speech...");
         try {
-            const res = await fetch(`${API}/tts`, {
+            const res = await fetch(`${TTS_API}/tts`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text, voice }),
